@@ -12,6 +12,7 @@ use App\Controllers\AuthController;
 use App\Controllers\DashboardController;
 use App\Controllers\TramiteController;
 use App\Controllers\ConsultaController;
+use App\Controllers\MesaPartesController;
 
 // Health Check
 $router->get('/health', function($request, $response) {
@@ -45,3 +46,9 @@ $router->post('/cambiar-password', [AuthController::class, 'updatePassword'], ['
 
 // Panel Administrativo y Dashboard
 $router->get('/dashboard', [DashboardController::class, 'index'], ['AuthMiddleware']);
+
+// Mesa de Partes
+$router->get('/mesa-partes', [MesaPartesController::class, 'index'], ['AuthMiddleware', 'RoleMiddleware:superadmin|admin|mesa_partes']);
+$router->get('/mesa-partes/registrar', [MesaPartesController::class, 'showRegistrar'], ['AuthMiddleware', 'RoleMiddleware:superadmin|admin|mesa_partes']);
+$router->post('/mesa-partes/registrar', [MesaPartesController::class, 'storeRegistrar'], ['AuthMiddleware', 'RoleMiddleware:superadmin|admin|mesa_partes', 'CsrfMiddleware']);
+$router->post('/mesa-partes/{id}/enviar-direccion', [MesaPartesController::class, 'enviarDireccion'], ['AuthMiddleware', 'RoleMiddleware:superadmin|admin|mesa_partes', 'CsrfMiddleware']);
