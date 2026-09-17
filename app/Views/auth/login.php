@@ -20,7 +20,8 @@ $oldUsername = Session::getFlash('old_username', '');
                    id="username" 
                    name="username" 
                    value="<?= ViewHelper::escape($oldUsername) ?>" 
-                   placeholder="Ingrese su usuario o DNI" 
+                   placeholder="Usuario, DNI o correo institucional" 
+                   autocomplete="username"
                    required 
                    autofocus>
         </div>
@@ -40,7 +41,9 @@ $oldUsername = Session::getFlash('old_username', '');
                    id="password" 
                    name="password" 
                    placeholder="Ingrese su contraseña" 
+                   autocomplete="current-password"
                    required>
+
             <button class="btn btn-outline-secondary bg-light border-start-0 text-muted" 
                     type="button" 
                     id="togglePassword" 

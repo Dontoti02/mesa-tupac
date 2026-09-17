@@ -12,21 +12,31 @@ class Usuario extends Model
 
     public function findByIdentifier(string $identifier): ?array
     {
+        $clean = trim($identifier);
+        if ($clean === '') {
+            return null;
+        }
+
+        $lower = mb_strtolower($clean, 'UTF-8');
+
         $stmt = $this->db()->prepare(
             "SELECT u.*, un.nombre AS unidad_nombre, un.codigo AS unidad_codigo 
              FROM `usuarios` u 
              LEFT JOIN `unidades` un ON u.unidad_id = un.id 
-             WHERE u.username = :u_ident OR u.email = :e_ident OR u.dni = :d_ident 
+             WHERE LOWER(TRIM(u.username)) = :u_ident 
+                OR LOWER(TRIM(u.email)) = :e_ident 
+                OR TRIM(u.dni) = :d_ident 
              LIMIT 1"
         );
         $stmt->execute([
-            'u_ident' => $identifier,
-            'e_ident' => $identifier,
-            'd_ident' => $identifier
+            'u_ident' => $lower,
+            'e_ident' => $lower,
+            'd_ident' => $clean
         ]);
         $row = $stmt->fetch();
         return $row ?: null;
     }
+
 
     public function findByEmail(string $email): ?array
     {

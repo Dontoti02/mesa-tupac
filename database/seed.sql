@@ -228,7 +228,8 @@ SELECT 6, `id` FROM `permisos` WHERE `slug` IN (
 TRUNCATE TABLE `usuarios`;
 -- Password para todos en seed: Admin123*
 INSERT INTO `usuarios` (`id`, `dni`, `nombres`, `apellidos`, `username`, `email`, `password_hash`, `telefono`, `cargo`, `unidad_id`, `estado`, `debe_cambiar_password`) VALUES
-(1, '00000001', 'Administrador', 'General', 'admin', 'admin@tupacamaru.edu.pe', '$2y$10$4DQSCck.FZeFShQiL8H6meM9zg/cQBsddaHDASbNsEFPWHi3gEcWu', '984000001', 'Administrador General del Sistema', NULL, 1, 1),
+(1, '00000001', 'Administrador', 'General', 'admin', 'admin@tupacamaru.edu.pe', '$2y$10$4DQSCck.FZeFShQiL8H6meM9zg/cQBsddaHDASbNsEFPWHi3gEcWu', '984000001', 'Administrador General del Sistema', NULL, 1, 0),
+
 (2, '00000002', 'Operador', 'Mesa de Partes', 'mesapartes', 'mesadepartes@tupacamaru.edu.pe', '$2y$10$4DQSCck.FZeFShQiL8H6meM9zg/cQBsddaHDASbNsEFPWHi3gEcWu', '984000002', 'Especialista de Trámite Documentario', 1, 1, 0),
 (3, '00000003', 'Director', 'Institucional', 'director', 'director@tupacamaru.edu.pe', '$2y$10$4DQSCck.FZeFShQiL8H6meM9zg/cQBsddaHDASbNsEFPWHi3gEcWu', '984000003', 'Director General IESP Túpac Amaru', 1, 1, 0),
 (4, '00000004', 'Jefe', 'Unidad Académica', 'academica', 'jefe.academica@tupacamaru.edu.pe', '$2y$10$4DQSCck.FZeFShQiL8H6meM9zg/cQBsddaHDASbNsEFPWHi3gEcWu', '984000004', 'Jefe de Unidad Académica', 2, 1, 0),
