@@ -9,6 +9,7 @@ declare(strict_types=1);
  */
 
 use App\Controllers\AuthController;
+use App\Controllers\DashboardController;
 
 // Health Check
 $router->get('/health', function($request, $response) {
@@ -28,3 +29,6 @@ $router->get('/logout', [AuthController::class, 'logout']);
 $router->post('/logout', [AuthController::class, 'logout'], ['CsrfMiddleware']);
 $router->get('/cambiar-password', [AuthController::class, 'showChangePassword']);
 $router->post('/cambiar-password', [AuthController::class, 'updatePassword'], ['CsrfMiddleware']);
+
+// Panel Administrativo y Dashboard
+$router->get('/dashboard', [DashboardController::class, 'index'], ['AuthMiddleware']);
