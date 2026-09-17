@@ -8,6 +8,9 @@ declare(strict_types=1);
  * @var \App\Core\Router $router
  */
 
+use App\Controllers\AuthController;
+
+// Health Check
 $router->get('/health', function($request, $response) {
     $response->json([
         'status' => 'ok',
@@ -17,3 +20,11 @@ $router->get('/health', function($request, $response) {
         'timestamp' => date('Y-m-d H:i:s')
     ]);
 });
+
+// Autenticación
+$router->get('/login', [AuthController::class, 'showLogin'], ['GuestMiddleware']);
+$router->post('/login', [AuthController::class, 'login'], ['CsrfMiddleware']);
+$router->get('/logout', [AuthController::class, 'logout']);
+$router->post('/logout', [AuthController::class, 'logout'], ['CsrfMiddleware']);
+$router->get('/cambiar-password', [AuthController::class, 'showChangePassword']);
+$router->post('/cambiar-password', [AuthController::class, 'updatePassword'], ['CsrfMiddleware']);
