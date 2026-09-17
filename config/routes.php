@@ -15,6 +15,7 @@ use App\Controllers\ConsultaController;
 use App\Controllers\MesaPartesController;
 use App\Controllers\DireccionController;
 use App\Controllers\UnidadController;
+use App\Controllers\ExpedienteController;
 
 // Health Check
 $router->get('/health', function($request, $response) {
@@ -66,3 +67,8 @@ $router->get('/mi-unidad', [UnidadController::class, 'index'], ['AuthMiddleware'
 $router->post('/mi-unidad/{id}/recepcionar', [UnidadController::class, 'recepcionar'], ['AuthMiddleware', 'CsrfMiddleware']);
 $router->get('/mi-unidad/{id}/responder', [UnidadController::class, 'showResponder'], ['AuthMiddleware']);
 $router->post('/mi-unidad/{id}/responder', [UnidadController::class, 'storeResponder'], ['AuthMiddleware', 'CsrfMiddleware']);
+
+// Expedientes Global, Detalle 360 y Descargas
+$router->get('/expedientes', [ExpedienteController::class, 'index'], ['AuthMiddleware']);
+$router->get('/expedientes/{id}', [ExpedienteController::class, 'show'], ['AuthMiddleware']);
+$router->get('/expedientes/{id}/documento/{doc_id}', [ExpedienteController::class, 'descargarDocumento'], ['AuthMiddleware']);
