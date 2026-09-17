@@ -13,6 +13,7 @@ use App\Controllers\DashboardController;
 use App\Controllers\TramiteController;
 use App\Controllers\ConsultaController;
 use App\Controllers\MesaPartesController;
+use App\Controllers\DireccionController;
 
 // Health Check
 $router->get('/health', function($request, $response) {
@@ -52,3 +53,9 @@ $router->get('/mesa-partes', [MesaPartesController::class, 'index'], ['AuthMiddl
 $router->get('/mesa-partes/registrar', [MesaPartesController::class, 'showRegistrar'], ['AuthMiddleware', 'RoleMiddleware:superadmin|admin|mesa_partes']);
 $router->post('/mesa-partes/registrar', [MesaPartesController::class, 'storeRegistrar'], ['AuthMiddleware', 'RoleMiddleware:superadmin|admin|mesa_partes', 'CsrfMiddleware']);
 $router->post('/mesa-partes/{id}/enviar-direccion', [MesaPartesController::class, 'enviarDireccion'], ['AuthMiddleware', 'RoleMiddleware:superadmin|admin|mesa_partes', 'CsrfMiddleware']);
+
+// Dirección General
+$router->get('/direccion', [DireccionController::class, 'index'], ['AuthMiddleware', 'RoleMiddleware:superadmin|admin|direccion']);
+$router->post('/direccion/{id}/derivar', [DireccionController::class, 'derivar'], ['AuthMiddleware', 'RoleMiddleware:superadmin|admin|direccion', 'CsrfMiddleware']);
+$router->post('/direccion/{id}/observar', [DireccionController::class, 'observar'], ['AuthMiddleware', 'RoleMiddleware:superadmin|admin|direccion', 'CsrfMiddleware']);
+$router->post('/direccion/{id}/aprobar', [DireccionController::class, 'aprobar'], ['AuthMiddleware', 'RoleMiddleware:superadmin|admin|direccion', 'CsrfMiddleware']);
