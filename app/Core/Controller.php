@@ -14,13 +14,14 @@ abstract class Controller
         $this->response = $response;
     }
 
-    protected function view(string $view, array $data = [], ?string $layout = 'app'): void
+    protected function view(string $view, array $data = [], string|bool|null $layout = 'app'): void
     {
+        $layoutStr = ($layout === false || $layout === null) ? null : (string)$layout;
         // Pasar automáticamente el usuario autenticado a todas las vistas
         if (!isset($data['currentUser'])) {
             $data['currentUser'] = Session::get('user');
         }
-        $this->response->view($view, $data, $layout);
+        $this->response->view($view, $data, $layoutStr);
     }
 
     protected function json(mixed $data, int $statusCode = 200): void

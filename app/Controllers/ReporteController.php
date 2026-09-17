@@ -59,7 +59,7 @@ class ReporteController extends Controller
             'title' => 'Reporte Estadístico Oficial - Mesa de Partes',
             'filters' => $filters,
             'config' => $config
-        ]), false); // View without main layout, self-contained printable template
+        ]), null); // View without main layout, self-contained printable template
     }
 
     public function csv(): void

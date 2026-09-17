@@ -58,8 +58,9 @@ class Response
         exit;
     }
 
-    public function view(string $viewPath, array $data = [], ?string $layout = 'app'): void
+    public function view(string $viewPath, array $data = [], string|bool|null $layout = 'app'): void
     {
+        $layout = ($layout === false ? null : $layout);
         $this->setHeader('Content-Type', 'text/html; charset=UTF-8');
         $this->sendHeaders();
 
