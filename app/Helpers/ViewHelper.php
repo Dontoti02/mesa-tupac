@@ -105,4 +105,14 @@ class ViewHelper
 
         return '';
     }
+
+    public static function flash(string $key): mixed
+    {
+        return \App\Core\Session::getFlash($key);
+    }
+
+    public static function hasFlash(string $key): bool
+    {
+        return \App\Core\Session::hasFlash($key);
+    }
 }
