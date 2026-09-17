@@ -1,0 +1,6 @@
+.env
+scratch/
+storage/documents/*
+!storage/documents/.gitkeep
+storage/logs/*
+!storage/logs/.gitkeep

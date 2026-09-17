@@ -1,0 +1,38 @@
+/**
+ * SISTEMA DE MESA DE PARTES VIRTUAL — IESP TÚPAC AMARU CUSCO
+ * Paleta de Colores Institucional Obligatoria (Variables CSS)
+ */
+
+:root {
+    /* Paleta Institucional Obligatoria */
+    --color-primary: #B3261E;           /* Rojo principal institucional */
+    --color-primary-hover: #7F1D1D;     /* Rojo oscuro */
+    --color-primary-light: #FEE2E2;     /* Rojo suave */
+    
+    --color-secondary: #F97316;         /* Naranja principal */
+    --color-secondary-hover: #C2410C;   /* Naranja oscuro */
+    --color-secondary-light: #FFEDD5;   /* Naranja suave */
+    
+    --color-dark: #374151;              /* Plomo oscuro */
+    --color-muted: #6B7280;             /* Plomo medio */
+    --color-border: #D1D5DB;            /* Plomo claro */
+    --color-bg: #F3F4F6;                /* Gris muy claro */
+    --color-surface: #FFFFFF;           /* Blanco puro */
+    
+    --color-sidebar: #374151;           /* Sidebar profesional */
+    --color-sidebar-hover: #1F2937;
+    --color-sidebar-active: #B3261E;
+    --color-sidebar-text: #F3F4F6;
+    
+    --color-header: #FFFFFF;
+    --color-header-text: #374151;
+
+    /* Tipografía y radios */
+    --font-main: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -1px rgba(0,0,0,0.04);
+    --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+}

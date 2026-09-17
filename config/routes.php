@@ -16,6 +16,7 @@ use App\Controllers\MesaPartesController;
 use App\Controllers\DireccionController;
 use App\Controllers\UnidadController;
 use App\Controllers\ExpedienteController;
+use App\Controllers\AdministracionController;
 
 // Health Check
 $router->get('/health', function($request, $response) {
@@ -72,3 +73,26 @@ $router->post('/mi-unidad/{id}/responder', [UnidadController::class, 'storeRespo
 $router->get('/expedientes', [ExpedienteController::class, 'index'], ['AuthMiddleware']);
 $router->get('/expedientes/{id}', [ExpedienteController::class, 'show'], ['AuthMiddleware']);
 $router->get('/expedientes/{id}/documento/{doc_id}', [ExpedienteController::class, 'descargarDocumento'], ['AuthMiddleware']);
+
+// Administración del Sistema (Superadmin y Admin)
+$router->get('/administracion/usuarios', [AdministracionController::class, 'usuarios'], ['AuthMiddleware', 'RoleMiddleware:superadmin|admin']);
+$router->post('/administracion/usuarios', [AdministracionController::class, 'storeUsuario'], ['AuthMiddleware', 'RoleMiddleware:superadmin|admin', 'CsrfMiddleware']);
+$router->post('/administracion/usuarios/{id}', [AdministracionController::class, 'updateUsuario'], ['AuthMiddleware', 'RoleMiddleware:superadmin|admin', 'CsrfMiddleware']);
+
+$router->get('/administracion/roles', [AdministracionController::class, 'roles'], ['AuthMiddleware', 'RoleMiddleware:superadmin|admin']);
+$router->post('/administracion/roles/{id}/permisos', [AdministracionController::class, 'syncRolPermisos'], ['AuthMiddleware', 'RoleMiddleware:superadmin|admin', 'CsrfMiddleware']);
+
+$router->get('/administracion/unidades', [AdministracionController::class, 'unidades'], ['AuthMiddleware', 'RoleMiddleware:superadmin|admin']);
+$router->post('/administracion/unidades', [AdministracionController::class, 'storeUnidad'], ['AuthMiddleware', 'RoleMiddleware:superadmin|admin', 'CsrfMiddleware']);
+$router->post('/administracion/unidades/{id}', [AdministracionController::class, 'updateUnidad'], ['AuthMiddleware', 'RoleMiddleware:superadmin|admin', 'CsrfMiddleware']);
+
+$router->get('/administracion/programas', [AdministracionController::class, 'programas'], ['AuthMiddleware', 'RoleMiddleware:superadmin|admin']);
+$router->post('/administracion/programas', [AdministracionController::class, 'storePrograma'], ['AuthMiddleware', 'RoleMiddleware:superadmin|admin', 'CsrfMiddleware']);
+$router->post('/administracion/programas/{id}', [AdministracionController::class, 'updatePrograma'], ['AuthMiddleware', 'RoleMiddleware:superadmin|admin', 'CsrfMiddleware']);
+
+$router->get('/administracion/tramites', [AdministracionController::class, 'tramites'], ['AuthMiddleware', 'RoleMiddleware:superadmin|admin']);
+$router->post('/administracion/tramites', [AdministracionController::class, 'storeTramite'], ['AuthMiddleware', 'RoleMiddleware:superadmin|admin', 'CsrfMiddleware']);
+$router->post('/administracion/tramites/{id}', [AdministracionController::class, 'updateTramite'], ['AuthMiddleware', 'RoleMiddleware:superadmin|admin', 'CsrfMiddleware']);
+
+$router->get('/administracion/estados', [AdministracionController::class, 'estados'], ['AuthMiddleware', 'RoleMiddleware:superadmin|admin']);
+$router->post('/administracion/estados/{id}', [AdministracionController::class, 'updateEstado'], ['AuthMiddleware', 'RoleMiddleware:superadmin|admin', 'CsrfMiddleware']);
