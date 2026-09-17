@@ -71,8 +71,8 @@ use App\Helpers\ViewHelper;
                 <p class="text-muted small mb-4 flex-grow-1">
                     Consulte los requisitos, plazos de atención y costos de los trámites de titulación, constancias, convalidaciones y certificaciones.
                 </p>
-                <a href="<?= ViewHelper::url('/tramite#catalogo') ?>" class="btn btn-outline-dark w-100 py-2">
-                    Ver Catálogo FUT <i class="bi bi-arrow-right ms-1"></i>
+                <a href="<?= ViewHelper::url('/catalogo') ?>" class="btn btn-outline-dark w-100 py-2">
+                    Ver Catálogo de Trámites <i class="bi bi-arrow-right ms-1"></i>
                 </a>
             </div>
         </div>

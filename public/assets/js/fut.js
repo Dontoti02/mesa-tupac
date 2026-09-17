@@ -57,6 +57,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 infoBox.style.display = 'none';
             }
         });
+
+        // Disparar evento si ya viene preseleccionado desde el catálogo
+        if (selectTramite.value) {
+            selectTramite.dispatchEvent(new Event('change'));
+        }
     }
 
     // 3. Indicador de archivos seleccionados

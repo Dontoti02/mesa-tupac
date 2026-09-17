@@ -41,6 +41,18 @@ class TramiteController extends Controller
         ], 'public');
     }
 
+    public function catalogo(): void
+    {
+        $tramites = $this->tipoTramiteModel->allWithDetails();
+        $categorias = (new \App\Models\CategoriaTramite())->all('orden ASC');
+
+        $this->view('public.catalogo', [
+            'title' => 'Catálogo de Trámites y Requisitos - FUT Digital',
+            'tramites' => $tramites,
+            'categorias' => $categorias
+        ], 'public');
+    }
+
     public function showFut(): void
     {
         $programas = $this->programaModel->allActive();

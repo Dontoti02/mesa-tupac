@@ -85,6 +85,11 @@ $colorSidebar = $config['color_sidebar'] ?? '#374151';
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link fw-semibold px-3 <?= ViewHelper::isActive('/catalogo') ?>" href="<?= ViewHelper::url('/catalogo') ?>">
+                            <i class="bi bi-journal-text me-1"></i> Catálogo FUT
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link fw-semibold px-3 <?= ViewHelper::isActive('/consulta') ?>" href="<?= ViewHelper::url('/consulta') ?>">
                             <i class="bi bi-search me-1"></i> Consultar Trámite
                         </a>
@@ -171,6 +176,10 @@ $colorSidebar = $config['color_sidebar'] ?? '#374151';
                     <nav class="d-flex flex-column">
                         <a href="<?= ViewHelper::url('/tramite') ?>" class="footer-link">
                             <span><i class="bi bi-file-earmark-text me-2"></i>Presentar FUT Digital</span>
+                            <i class="bi bi-arrow-right small"></i>
+                        </a>
+                        <a href="<?= ViewHelper::url('/catalogo') ?>" class="footer-link">
+                            <span><i class="bi bi-journal-text me-2"></i>Catálogo de Trámites FUT</span>
                             <i class="bi bi-arrow-right small"></i>
                         </a>
                         <a href="<?= ViewHelper::url('/consulta') ?>" class="footer-link">

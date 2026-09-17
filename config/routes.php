@@ -35,6 +35,8 @@ $router->get('/health', function($request, $response) {
 
 // Portal Ciudadano y FUT Digital
 $router->get('/', [TramiteController::class, 'inicio']);
+$router->get('/catalogo', [TramiteController::class, 'catalogo']);
+$router->get('/tramites', [TramiteController::class, 'catalogo']);
 $router->get('/tramite', [TramiteController::class, 'showFut']);
 $router->post('/tramite', [TramiteController::class, 'processFut'], ['CsrfMiddleware']);
 $router->get('/tramite/confirmacion/{id}', [TramiteController::class, 'showConfirmacion']);

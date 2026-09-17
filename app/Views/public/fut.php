@@ -133,8 +133,13 @@ use App\Helpers\ViewHelper;
                                 <option value="">-- Seleccione el procedimiento oficial del FUT --</option>
                                 <?php foreach ($tramitesGrouped as $categoriaNombre => $tramitesList): ?>
                                     <optgroup label="<?= ViewHelper::escape($categoriaNombre) ?>">
-                                        <?php foreach ($tramitesList as $t): ?>
+                                        <?php 
+                                        $selectedProcId = isset($_GET['procedimiento']) ? (int)$_GET['procedimiento'] : 0;
+                                        foreach ($tramitesList as $t): 
+                                            $isSelected = ($selectedProcId > 0 && (int)$t['id'] === $selectedProcId);
+                                        ?>
                                             <option value="<?= $t['id'] ?>" 
+                                                    <?= $isSelected ? 'selected' : '' ?>
                                                     data-requisitos="<?= ViewHelper::escape($t['requisitos'] ?? '') ?>"
                                                     data-plazo="<?= $t['plazo_dias'] ?>"
                                                     data-costo="<?= $t['costo'] ?>">
