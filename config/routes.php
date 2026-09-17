@@ -11,6 +11,7 @@ declare(strict_types=1);
 use App\Controllers\AuthController;
 use App\Controllers\DashboardController;
 use App\Controllers\TramiteController;
+use App\Controllers\ConsultaController;
 
 // Health Check
 $router->get('/health', function($request, $response) {
@@ -29,6 +30,10 @@ $router->get('/tramite', [TramiteController::class, 'showFut']);
 $router->post('/tramite', [TramiteController::class, 'processFut'], ['CsrfMiddleware']);
 $router->get('/tramite/confirmacion/{id}', [TramiteController::class, 'showConfirmacion']);
 $router->get('/cargo/{id}', [TramiteController::class, 'showCargo']);
+
+// Consulta Pública y Seguimiento
+$router->get('/consulta', [ConsultaController::class, 'index']);
+$router->post('/consulta', [ConsultaController::class, 'index']);
 
 // Autenticación
 $router->get('/login', [AuthController::class, 'showLogin'], ['GuestMiddleware']);
