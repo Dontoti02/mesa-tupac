@@ -84,44 +84,34 @@ class ReporteController extends Controller
         fputcsv($output, [
             'N° Expediente',
             'Código Seguimiento',
-            'Tipo Ingreso',
             'Fecha Registro',
-            'Tipo Solicitante',
-            'DNI / RUC',
-            'Nombres y Apellidos / Razón Social',
-            'Teléfono',
+            'DNI',
+            'Apellidos y Nombres',
+            'Celular',
             'Correo Electrónico',
             'Procedimiento FUT',
             'Unidad Actual',
             'Estado',
             'Prioridad',
-            'Folios',
-            'Asunto / Sumilla'
+            'Asunto / Solicitud'
         ], ';');
 
         foreach ($expedientes as $exp) {
-            $solicitante = $exp['tipo_solicitante'] === 'juridica' 
-                ? ($exp['razon_social'] ?? '') 
-                : ($exp['nombres'] . ' ' . $exp['apellidos']);
-
-            $doc = $exp['tipo_solicitante'] === 'juridica' ? ($exp['ruc'] ?? '') : ($exp['numero_documento'] ?? '');
+            $solicitante = trim($exp['apellido_paterno'] . ' ' . $exp['apellido_materno'] . ', ' . $exp['nombres']);
 
             fputcsv($output, [
                 $exp['numero_expediente'],
                 $exp['codigo_seguimiento'],
-                strtoupper($exp['forma_presentacion'] ?? 'VIRTUAL'),
                 $exp['created_at'],
-                strtoupper($exp['tipo_solicitante']),
-                $doc,
+                $exp['dni'] ?? '',
                 $solicitante,
-                $exp['telefono'] ?? '',
-                $exp['email'] ?? '',
+                $exp['celular'] ?? '',
+                $exp['correo'] ?? '',
                 $exp['tramite_nombre'] ?? '',
                 $exp['unidad_actual_nombre'] ?? 'Mesa de Partes',
                 $exp['estado_nombre'] ?? '',
                 strtoupper($exp['prioridad_nombre'] ?? 'NORMAL'),
-                $exp['folios'] ?? 1,
-                $exp['asunto'] ?? ''
+                $exp['solicito'] ?? ''
             ], ';');
         }
 
@@ -136,8 +126,7 @@ class ReporteController extends Controller
             'hasta' => $this->request->get('hasta', date('Y-m-d')),
             'unidad_id' => $this->request->get('unidad_id', ''),
             'estado_id' => $this->request->get('estado_id', ''),
-            'tipo_tramite_id' => $this->request->get('tipo_tramite_id', ''),
-            'origen' => $this->request->get('origen', '')
+            'tipo_tramite_id' => $this->request->get('tipo_tramite_id', '')
         ];
     }
 
@@ -162,10 +151,6 @@ class ReporteController extends Controller
         if (!empty($filters['tipo_tramite_id'])) {
             $where[] = "e.tipo_tramite_id = :tipo_tramite_id";
             $params['tipo_tramite_id'] = (int)$filters['tipo_tramite_id'];
-        }
-        if (!empty($filters['origen'])) {
-            $where[] = "e.forma_presentacion = :origen";
-            $params['origen'] = $filters['origen'];
         }
 
         $whereClause = implode(" AND ", $where);

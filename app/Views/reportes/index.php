@@ -53,11 +53,14 @@ use App\Helpers\Csrf;
                 </select>
             </div>
             <div class="col-md-2">
-                <label class="form-label fw-semibold small">Canal de Ingreso</label>
-                <select class="form-select" name="origen">
-                    <option value="">-- Todos --</option>
-                    <option value="virtual" <?= $filters['origen'] === 'virtual' ? 'selected' : '' ?>>Virtual (FUT Web)</option>
-                    <option value="presencial" <?= $filters['origen'] === 'presencial' ? 'selected' : '' ?>>Presencial (Ventanilla)</option>
+                <label class="form-label fw-semibold small">Procedimiento</label>
+                <select class="form-select" name="tipo_tramite_id">
+                    <option value="">-- Todos los Trámites --</option>
+                    <?php foreach ($tramites as $t): ?>
+                        <option value="<?= $t['id'] ?>" <?= ($filters['tipo_tramite_id'] ?? '') == $t['id'] ? 'selected' : '' ?>>
+                            <?= ViewHelper::escape($t['codigo']) ?>
+                        </option>
+                    <?php endforeach; ?>
                 </select>
             </div>
             <div class="col-12 d-flex justify-content-end gap-2 pt-2">
@@ -229,16 +232,13 @@ use App\Helpers\Csrf;
                             </td>
                             <td>
                                 <div class="small fw-semibold"><?= ViewHelper::formatDate($exp['created_at']) ?></div>
-                                <span class="badge bg-light text-secondary border" style="font-size: 0.7rem;">
-                                    <?= strtoupper($exp['forma_presentacion'] ?? 'VIRTUAL') ?>
-                                </span>
                             </td>
                             <td>
                                 <div class="fw-semibold small">
-                                    <?= ViewHelper::escape($exp['tipo_solicitante'] === 'juridica' ? $exp['razon_social'] : ($exp['nombres'] . ' ' . $exp['apellidos'])) ?>
+                                    <?= ViewHelper::escape(trim($exp['apellido_paterno'] . ' ' . $exp['apellido_materno'] . ', ' . $exp['nombres'])) ?>
                                 </div>
                                 <small class="text-muted font-monospace">
-                                    <?= ViewHelper::escape($exp['tipo_solicitante'] === 'juridica' ? ('RUC: ' . $exp['ruc']) : ('DNI: ' . $exp['numero_documento'])) ?>
+                                    DNI: <?= ViewHelper::escape($exp['dni'] ?? '') ?>
                                 </small>
                             </td>
                             <td>

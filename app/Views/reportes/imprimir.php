@@ -172,7 +172,7 @@ use App\Helpers\ViewHelper;
                     <tr>
                         <td class="fw-bold font-monospace"><?= ViewHelper::escape($exp['numero_expediente']) ?></td>
                         <td><?= ViewHelper::formatDate($exp['created_at']) ?></td>
-                        <td><?= ViewHelper::escape($exp['tipo_solicitante'] === 'juridica' ? $exp['razon_social'] : ($exp['nombres'] . ' ' . $exp['apellidos'])) ?></td>
+                        <td><?= ViewHelper::escape(trim($exp['apellido_paterno'] . ' ' . $exp['apellido_materno'] . ', ' . $exp['nombres'])) ?></td>
                         <td><?= ViewHelper::escape($exp['tramite_nombre'] ?? '-') ?></td>
                         <td><?= ViewHelper::escape($exp['unidad_actual_nombre'] ?? 'Mesa de Partes') ?></td>
                         <td><span class="badge bg-light text-dark border"><?= ViewHelper::escape($exp['estado_nombre'] ?? '-') ?></span></td>

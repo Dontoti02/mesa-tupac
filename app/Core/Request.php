@@ -40,13 +40,13 @@ class Request
 
         // Detectar base path si la aplicación se aloja en un subdirectorio (ej. /mesa-tupac o /mesa-tupac/public)
         $scriptName = $this->server['SCRIPT_NAME'] ?? '';
-        $baseDir = dirname($scriptName); // ej. /mesa-tupac/public o /mesa-tupac
+        $baseDir = str_replace('\\', '/', dirname($scriptName)); // ej. /mesa-tupac/public o /mesa-tupac
 
-        // Normalizar barras invertidas de Windows a barras diagonales
-        $baseDir = str_replace('\\', '/', $baseDir);
+        // Remover /public del baseDir si existe para obtener el directorio base del proyecto
+        $projectBase = preg_replace('#/public$#', '', $baseDir);
 
-        if ($baseDir !== '/' && $baseDir !== '' && str_starts_with($path, $baseDir)) {
-            $path = substr($path, strlen($baseDir));
+        if (!empty($projectBase) && $projectBase !== '/' && str_starts_with($path, $projectBase)) {
+            $path = substr($path, strlen($projectBase));
         }
 
         // Si la ruta aún tiene /public al inicio, limpiarla
