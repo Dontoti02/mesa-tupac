@@ -14,6 +14,7 @@ use App\Controllers\TramiteController;
 use App\Controllers\ConsultaController;
 use App\Controllers\MesaPartesController;
 use App\Controllers\DireccionController;
+use App\Controllers\UnidadController;
 
 // Health Check
 $router->get('/health', function($request, $response) {
@@ -59,3 +60,9 @@ $router->get('/direccion', [DireccionController::class, 'index'], ['AuthMiddlewa
 $router->post('/direccion/{id}/derivar', [DireccionController::class, 'derivar'], ['AuthMiddleware', 'RoleMiddleware:superadmin|admin|direccion', 'CsrfMiddleware']);
 $router->post('/direccion/{id}/observar', [DireccionController::class, 'observar'], ['AuthMiddleware', 'RoleMiddleware:superadmin|admin|direccion', 'CsrfMiddleware']);
 $router->post('/direccion/{id}/aprobar', [DireccionController::class, 'aprobar'], ['AuthMiddleware', 'RoleMiddleware:superadmin|admin|direccion', 'CsrfMiddleware']);
+
+// Bandeja de Unidad Orgánica ("Mi Unidad")
+$router->get('/mi-unidad', [UnidadController::class, 'index'], ['AuthMiddleware']);
+$router->post('/mi-unidad/{id}/recepcionar', [UnidadController::class, 'recepcionar'], ['AuthMiddleware', 'CsrfMiddleware']);
+$router->get('/mi-unidad/{id}/responder', [UnidadController::class, 'showResponder'], ['AuthMiddleware']);
+$router->post('/mi-unidad/{id}/responder', [UnidadController::class, 'storeResponder'], ['AuthMiddleware', 'CsrfMiddleware']);
