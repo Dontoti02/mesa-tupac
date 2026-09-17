@@ -49,6 +49,10 @@ $router->post('/consulta', [ConsultaController::class, 'index']);
 // Autenticación
 $router->get('/login', [AuthController::class, 'showLogin'], ['GuestMiddleware']);
 $router->post('/login', [AuthController::class, 'login'], ['CsrfMiddleware']);
+$router->get('/recuperar-password', [AuthController::class, 'showForgotPassword'], ['GuestMiddleware']);
+$router->post('/recuperar-password', [AuthController::class, 'sendResetLink'], ['GuestMiddleware', 'CsrfMiddleware']);
+$router->get('/restablecer-password', [AuthController::class, 'showResetPassword'], ['GuestMiddleware']);
+$router->post('/restablecer-password', [AuthController::class, 'resetPassword'], ['GuestMiddleware', 'CsrfMiddleware']);
 $router->get('/logout', [AuthController::class, 'logout']);
 $router->post('/logout', [AuthController::class, 'logout'], ['CsrfMiddleware']);
 $router->get('/cambiar-password', [AuthController::class, 'showChangePassword']);

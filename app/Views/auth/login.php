@@ -27,7 +27,10 @@ $oldUsername = Session::getFlash('old_username', '');
     </div>
 
     <div class="mb-4">
-        <label for="password" class="form-label fw-semibold small text-uppercase" style="letter-spacing: 0.5px;">Contraseña</label>
+        <div class="d-flex justify-content-between align-items-center mb-1">
+            <label for="password" class="form-label fw-semibold small text-uppercase mb-0" style="letter-spacing: 0.5px;">Contraseña</label>
+            <a href="<?= ViewHelper::url('/recuperar-password') ?>" class="small text-decoration-none text-muted" style="font-size: 0.8rem;">¿Olvidó su contraseña?</a>
+        </div>
         <div class="input-group">
             <span class="input-group-text bg-light border-end-0 text-muted">
                 <i class="bi bi-shield-lock"></i>

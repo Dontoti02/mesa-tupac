@@ -10,9 +10,14 @@ class Mailer
 {
     private static ?array $smtpConfig = null;
 
-    public static function getConfig(): array
+    public static function clearConfigCache(): void
     {
-        if (self::$smtpConfig !== null) {
+        self::$smtpConfig = null;
+    }
+
+    public static function getConfig(bool $forceReload = false): array
+    {
+        if (self::$smtpConfig !== null && !$forceReload) {
             return self::$smtpConfig;
         }
 
@@ -44,6 +49,12 @@ class Mailer
         }
 
         return self::$smtpConfig;
+    }
+
+    public static function isActive(): bool
+    {
+        $cfg = self::getConfig();
+        return !empty($cfg['activo']);
     }
 
     public static function send(string $to, string $subject, string $htmlContent): bool

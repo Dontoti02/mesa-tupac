@@ -28,6 +28,16 @@ class Usuario extends Model
         return $row ?: null;
     }
 
+    public function findByEmail(string $email): ?array
+    {
+        $stmt = $this->db()->prepare(
+            "SELECT * FROM `usuarios` WHERE `email` = :email AND `estado` = 1 LIMIT 1"
+        );
+        $stmt->execute(['email' => $email]);
+        $row = $stmt->fetch();
+        return $row ?: null;
+    }
+
     public function getRoles(int $usuarioId): array
     {
         $stmt = $this->db()->prepare(
