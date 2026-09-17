@@ -107,43 +107,95 @@ $colorSidebar = $config['color_sidebar'] ?? '#374151';
         <?= $content ?>
     </main>
 
-    <!-- Footer Ciudadano -->
+    <!-- Footer Ciudadano de Alto Contraste -->
     <footer class="public-footer">
         <div class="container">
             <div class="row g-4">
+                <!-- Columna 1: Identidad Institucional -->
                 <div class="col-lg-5">
-                    <h6 class="text-white fw-bold mb-3"><?= ViewHelper::escape($instNombre) ?></h6>
-                    <p class="small text-muted mb-2">Dependiente de la <?= ViewHelper::escape($instDependencia) ?>. Autorizado mediante <?= ViewHelper::escape($instResolucion) ?>.</p>
-                    <p class="small text-muted">Mesa de Partes Virtual disponible para la recepción digital de solicitudes, trámites académicos, administrativos y consultas ciudadanas.</p>
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <div class="rounded-circle bg-danger-subtle text-danger d-flex align-items-center justify-content-center" style="width: 38px; height: 38px; background: rgba(179, 38, 30, 0.2) !important;">
+                            <i class="bi bi-bank fs-5 text-white"></i>
+                        </div>
+                        <h6 class="footer-title mb-0"><?= ViewHelper::escape($instNombre) ?></h6>
+                    </div>
+                    <div class="d-flex flex-wrap gap-2 mb-3">
+                        <span class="footer-badge-inst">
+                            <i class="bi bi-patch-check-fill text-warning me-1"></i><?= ViewHelper::escape($instResolucion) ?>
+                        </span>
+                        <span class="footer-badge-inst">
+                            <i class="bi bi-shield-check text-success me-1"></i><?= ViewHelper::escape($instDependencia) ?>
+                        </span>
+                    </div>
+                    <p class="footer-desc mb-0">
+                        Plataforma oficial de Mesa de Partes Digital del IESP Túpac Amaru Cusco, habilitada para la recepción formal, derivación y atención oportuna de trámites académicos y administrativos de la ciudadanía.
+                    </p>
                 </div>
+
+                <!-- Columna 2: Canales de Atención -->
                 <div class="col-lg-4">
-                    <h6 class="text-white fw-bold mb-3">Atención y Contacto</h6>
-                    <ul class="list-unstyled small text-muted mb-0 d-flex flex-column gap-2">
-                        <li><i class="bi bi-geo-alt-fill text-warning me-2"></i><?= ViewHelper::escape($instDireccion) ?></li>
-                        <li><i class="bi bi-telephone-fill text-warning me-2"></i><?= ViewHelper::escape($instTelefono) ?></li>
-                        <li><i class="bi bi-envelope-fill text-warning me-2"></i><?= ViewHelper::escape($instCorreo) ?></li>
-                        <li><i class="bi bi-clock-fill text-warning me-2"></i>Lunes a Viernes: 08:00 a 16:30 hrs.</li>
-                    </ul>
-                </div>
-                <div class="col-lg-3">
-                    <h6 class="text-white fw-bold mb-3">Accesos Directos</h6>
-                    <div class="d-flex flex-column gap-2 small">
-                        <a href="<?= ViewHelper::url('/tramite') ?>" class="text-decoration-none text-light">
-                            <i class="bi bi-chevron-right me-1 text-warning"></i> Formulario FUT Digital
-                        </a>
-                        <a href="<?= ViewHelper::url('/consulta') ?>" class="text-decoration-none text-light">
-                            <i class="bi bi-chevron-right me-1 text-warning"></i> Seguimiento de Expedientes
-                        </a>
-                        <a href="<?= ViewHelper::url('/login') ?>" class="text-decoration-none text-light">
-                            <i class="bi bi-chevron-right me-1 text-warning"></i> Intranet de Funcionarios
-                        </a>
+                    <h6 class="footer-title">Canales de Atención</h6>
+                    <div class="footer-contact-item">
+                        <span class="footer-icon-box"><i class="bi bi-geo-alt-fill"></i></span>
+                        <div>
+                            <strong class="d-block text-white">Sede Central:</strong>
+                            <span><?= ViewHelper::escape($instDireccion) ?></span>
+                        </div>
+                    </div>
+                    <div class="footer-contact-item">
+                        <span class="footer-icon-box"><i class="bi bi-telephone-fill"></i></span>
+                        <div>
+                            <strong class="d-block text-white">Teléfono de Mesa:</strong>
+                            <span><?= ViewHelper::escape($instTelefono) ?></span>
+                        </div>
+                    </div>
+                    <div class="footer-contact-item">
+                        <span class="footer-icon-box"><i class="bi bi-envelope-fill"></i></span>
+                        <div>
+                            <strong class="d-block text-white">Correo Oficial:</strong>
+                            <span><?= ViewHelper::escape($instCorreo) ?></span>
+                        </div>
+                    </div>
+                    <div class="footer-contact-item">
+                        <span class="footer-icon-box"><i class="bi bi-clock-fill"></i></span>
+                        <div>
+                            <strong class="d-block text-white">Horario Hábil:</strong>
+                            <span>Lunes a Viernes: 08:00 a 16:30 hrs.</span>
+                        </div>
                     </div>
                 </div>
+
+                <!-- Columna 3: Accesos Rápidos -->
+                <div class="col-lg-3">
+                    <h6 class="footer-title">Servicios Digitales</h6>
+                    <nav class="d-flex flex-column">
+                        <a href="<?= ViewHelper::url('/tramite') ?>" class="footer-link">
+                            <span><i class="bi bi-file-earmark-text me-2"></i>Presentar FUT Digital</span>
+                            <i class="bi bi-arrow-right small"></i>
+                        </a>
+                        <a href="<?= ViewHelper::url('/consulta') ?>" class="footer-link">
+                            <span><i class="bi bi-search me-2"></i>Seguimiento en Línea</span>
+                            <i class="bi bi-arrow-right small"></i>
+                        </a>
+                        <a href="<?= ViewHelper::url('/login') ?>" class="footer-link">
+                            <span><i class="bi bi-person-lock me-2"></i>Portal de Funcionarios</span>
+                            <i class="bi bi-arrow-right small"></i>
+                        </a>
+                    </nav>
+                </div>
             </div>
-            <hr class="my-4 border-secondary opacity-25">
-            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center small text-muted gap-2">
-                <div>&copy; <?= date('Y') ?> <?= ViewHelper::escape($instNombreCorto) ?>. Todos los derechos reservados.</div>
-                <div>Sistema Web de Trámite Documentario Digital &bull; Transparencia Institucional</div>
+
+            <hr class="footer-divider">
+
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center footer-bottom gap-2">
+                <div>
+                    &copy; <?= date('Y') ?> <strong><?= ViewHelper::escape($instNombreCorto) ?></strong>. Todos los derechos reservados.
+                </div>
+                <div class="d-flex gap-3">
+                    <span>Mesa de Partes Virtual Oficial</span>
+                    <span>&bull;</span>
+                    <span>Transparencia y Trazabilidad Institucional</span>
+                </div>
             </div>
         </div>
     </footer>
