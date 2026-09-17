@@ -18,6 +18,9 @@ use App\Controllers\UnidadController;
 use App\Controllers\ExpedienteController;
 use App\Controllers\AdministracionController;
 use App\Controllers\ConfiguracionController;
+use App\Controllers\ReporteController;
+use App\Controllers\AuditoriaController;
+use App\Controllers\NotificacionController;
 
 // Health Check
 $router->get('/health', function($request, $response) {
@@ -108,3 +111,17 @@ $router->post('/administracion/apariencia', [ConfiguracionController::class, 'up
 $router->get('/administracion/smtp', [ConfiguracionController::class, 'smtp'], ['AuthMiddleware', 'RoleMiddleware:superadmin|admin']);
 $router->post('/administracion/smtp', [ConfiguracionController::class, 'updateSmtp'], ['AuthMiddleware', 'RoleMiddleware:superadmin|admin', 'CsrfMiddleware']);
 $router->post('/administracion/smtp/probar', [ConfiguracionController::class, 'probarSmtp'], ['AuthMiddleware', 'RoleMiddleware:superadmin|admin', 'CsrfMiddleware']);
+
+// Reportes y Métricas
+$router->get('/reportes', [ReporteController::class, 'index'], ['AuthMiddleware']);
+$router->get('/reportes/imprimir', [ReporteController::class, 'imprimir'], ['AuthMiddleware']);
+$router->get('/reportes/csv', [ReporteController::class, 'csv'], ['AuthMiddleware']);
+
+// Auditoría y Trazabilidad Forense
+$router->get('/auditoria', [AuditoriaController::class, 'index'], ['AuthMiddleware', 'RoleMiddleware:superadmin|admin']);
+$router->get('/auditoria/{id}', [AuditoriaController::class, 'detalle'], ['AuthMiddleware', 'RoleMiddleware:superadmin|admin']);
+
+// Notificaciones del Sistema
+$router->get('/notificaciones', [NotificacionController::class, 'index'], ['AuthMiddleware']);
+$router->post('/notificaciones/marcar-leidas', [NotificacionController::class, 'marcarLeidas'], ['AuthMiddleware', 'CsrfMiddleware']);
+$router->get('/api/notificaciones/unread', [NotificacionController::class, 'unreadCount'], ['AuthMiddleware']);
