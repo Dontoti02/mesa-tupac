@@ -17,6 +17,7 @@ use App\Controllers\DireccionController;
 use App\Controllers\UnidadController;
 use App\Controllers\ExpedienteController;
 use App\Controllers\AdministracionController;
+use App\Controllers\ConfiguracionController;
 
 // Health Check
 $router->get('/health', function($request, $response) {
@@ -96,3 +97,14 @@ $router->post('/administracion/tramites/{id}', [AdministracionController::class,
 
 $router->get('/administracion/estados', [AdministracionController::class, 'estados'], ['AuthMiddleware', 'RoleMiddleware:superadmin|admin']);
 $router->post('/administracion/estados/{id}', [AdministracionController::class, 'updateEstado'], ['AuthMiddleware', 'RoleMiddleware:superadmin|admin', 'CsrfMiddleware']);
+
+// Configuración Institucional, Apariencia y SMTP
+$router->get('/administracion/configuracion', [ConfiguracionController::class, 'configuracion'], ['AuthMiddleware', 'RoleMiddleware:superadmin|admin']);
+$router->post('/administracion/configuracion', [ConfiguracionController::class, 'updateConfiguracion'], ['AuthMiddleware', 'RoleMiddleware:superadmin|admin', 'CsrfMiddleware']);
+
+$router->get('/administracion/apariencia', [ConfiguracionController::class, 'apariencia'], ['AuthMiddleware', 'RoleMiddleware:superadmin|admin']);
+$router->post('/administracion/apariencia', [ConfiguracionController::class, 'updateApariencia'], ['AuthMiddleware', 'RoleMiddleware:superadmin|admin', 'CsrfMiddleware']);
+
+$router->get('/administracion/smtp', [ConfiguracionController::class, 'smtp'], ['AuthMiddleware', 'RoleMiddleware:superadmin|admin']);
+$router->post('/administracion/smtp', [ConfiguracionController::class, 'updateSmtp'], ['AuthMiddleware', 'RoleMiddleware:superadmin|admin', 'CsrfMiddleware']);
+$router->post('/administracion/smtp/probar', [ConfiguracionController::class, 'probarSmtp'], ['AuthMiddleware', 'RoleMiddleware:superadmin|admin', 'CsrfMiddleware']);
