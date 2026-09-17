@@ -95,7 +95,79 @@ $colorSecondary = $config['color_secundario'] ?? '#F97316';
             color: var(--color-muted);
             font-size: 0.825rem;
             text-align: center;
-            margin-top: 1.75rem;
+            margin-top: 1.5rem;
+        }
+
+        /* Botones de acción pública destacados */
+        .auth-public-actions {
+            width: 100%;
+            max-width: 440px;
+            margin-top: 1.25rem;
+        }
+
+        .auth-action-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+            background: #ffffff;
+            border: 1.5px solid #E2E8F0;
+            border-radius: 12px;
+            padding: 0.8rem 1rem;
+            text-decoration: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            color: #1E293B;
+            height: 100%;
+        }
+
+        .auth-action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(179, 38, 30, 0.15);
+            border-color: var(--color-primary);
+            color: var(--color-primary);
+            background: #ffffff;
+        }
+
+        .auth-action-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+            transition: transform 0.25s ease;
+        }
+
+        .auth-action-btn:hover .auth-action-icon {
+            transform: scale(1.1);
+        }
+
+        .auth-action-content {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            line-height: 1.25;
+            text-align: left;
+        }
+
+        .auth-action-title {
+            font-size: 0.86rem;
+            font-weight: 700;
+            color: #1E293B;
+            white-space: nowrap;
+            transition: color 0.2s ease;
+        }
+
+        .auth-action-btn:hover .auth-action-title {
+            color: var(--color-primary);
+        }
+
+        .auth-action-desc {
+            font-size: 0.72rem;
+            color: #64748B;
+            white-space: nowrap;
         }
     </style>
 </head>
@@ -120,18 +192,37 @@ $colorSecondary = $config['color_secundario'] ?? '#F97316';
         </div>
     </div>
 
+    <!-- Botones de Acción Ciudadana Destacados -->
+    <div class="auth-public-actions">
+        <div class="row g-2">
+            <div class="col-6">
+                <a href="<?= ViewHelper::url('/') ?>" class="auth-action-btn" title="Ir a la portada pública del sistema">
+                    <div class="auth-action-icon" style="background: rgba(179, 38, 30, 0.1); color: var(--color-primary);">
+                        <i class="bi bi-house-door-fill"></i>
+                    </div>
+                    <div class="auth-action-content">
+                        <span class="auth-action-title">Portal Público</span>
+                        <span class="auth-action-desc">Inicio &amp; Trámites</span>
+                    </div>
+                </a>
+            </div>
+            <div class="col-6">
+                <a href="<?= ViewHelper::url('/consulta') ?>" class="auth-action-btn" title="Consultar el estado de un trámite en tiempo real">
+                    <div class="auth-action-icon" style="background: rgba(249, 115, 22, 0.12); color: #C2410C;">
+                        <i class="bi bi-search"></i>
+                    </div>
+                    <div class="auth-action-content">
+                        <span class="auth-action-title">Seguimiento</span>
+                        <span class="auth-action-desc">Consultar Estado</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
     <div class="auth-footer-text">
         <div><strong><?= ViewHelper::escape($instNombre) ?></strong></div>
         <div class="mt-1">Sistema Web de Trámite Documentario Digital &copy; <?= date('Y') ?></div>
-        <div class="mt-2">
-            <a href="<?= ViewHelper::url('/') ?>" class="text-decoration-none text-muted">
-                <i class="bi bi-arrow-left me-1"></i>Ir al Portal Público
-            </a>
-            <span class="mx-2">|</span>
-            <a href="<?= ViewHelper::url('/consulta') ?>" class="text-decoration-none text-muted">
-                <i class="bi bi-search me-1"></i>Consultar Expediente
-            </a>
-        </div>
     </div>
 
     <!-- Bootstrap 5 JS -->
