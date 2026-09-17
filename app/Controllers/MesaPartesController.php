@@ -76,8 +76,13 @@ class MesaPartesController extends Controller
         }
 
         if (!empty($search)) {
-            $sql .= " AND (e.numero_expediente LIKE :search OR e.codigo_seguimiento LIKE :search OR e.dni LIKE :search OR e.nombres LIKE :search OR e.apellido_paterno LIKE :search)";
-            $params['search'] = "%{$search}%";
+            $sql .= " AND (e.numero_expediente LIKE :s1 OR e.codigo_seguimiento LIKE :s2 OR e.dni LIKE :s3 OR e.nombres LIKE :s4 OR e.apellido_paterno LIKE :s5)";
+            $term = "%{$search}%";
+            $params['s1'] = $term;
+            $params['s2'] = $term;
+            $params['s3'] = $term;
+            $params['s4'] = $term;
+            $params['s5'] = $term;
         }
 
         $sql .= " ORDER BY e.fecha_ingreso DESC";

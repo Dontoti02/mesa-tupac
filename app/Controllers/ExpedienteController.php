@@ -55,8 +55,15 @@ class ExpedienteController extends Controller
         $params = [];
 
         if (!empty($q)) {
-            $where[] = "(e.numero_expediente LIKE :q OR e.codigo_seguimiento LIKE :q OR e.dni LIKE :q OR e.nombres LIKE :q OR e.apellido_paterno LIKE :q OR e.apellido_materno LIKE :q OR e.sumilla LIKE :q)";
-            $params['q'] = "%{$q}%";
+            $where[] = "(e.numero_expediente LIKE :q1 OR e.codigo_seguimiento LIKE :q2 OR e.dni LIKE :q3 OR e.nombres LIKE :q4 OR e.apellido_paterno LIKE :q5 OR e.apellido_materno LIKE :q6 OR e.sumilla LIKE :q7)";
+            $term = "%{$q}%";
+            $params['q1'] = $term;
+            $params['q2'] = $term;
+            $params['q3'] = $term;
+            $params['q4'] = $term;
+            $params['q5'] = $term;
+            $params['q6'] = $term;
+            $params['q7'] = $term;
         }
         if (!empty($estadoId)) {
             $where[] = "e.estado_id = :estado_id";
