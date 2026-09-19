@@ -80,13 +80,6 @@ class AuthController extends Controller
         $passwordValid = false;
         if ($user) {
             $passwordValid = password_verify($password, $user['password_hash']);
-            // Compatibilidad institucional para la cuenta administrador con clave predeterminada 'Admin123*'
-            if (!$passwordValid && (int)$user['id'] === 1) {
-                if (password_verify($password, '$2y$10$4DQSCck.FZeFShQiL8H6meM9zg/cQBsddaHDASbNsEFPWHi3gEcWu') ||
-                    password_verify($password, '$2y$10$cWFoSzhMm3/sdPpWFpKX6.OWS7TJyRS8hPWTFP6kbV/F28GG4YRXa')) {
-                    $passwordValid = true;
-                }
-            }
         }
 
         if (!$user || !$passwordValid) {

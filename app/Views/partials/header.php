@@ -1,5 +1,6 @@
 <?php
 use App\Helpers\ViewHelper;
+use App\Helpers\Csrf;
 use App\Core\Session;
 
 $user = Session::get('user');
@@ -64,9 +65,12 @@ if ($user && class_exists('App\Models\Notificacion')) {
                 </li>
                 <li><hr class="dropdown-divider my-1"></li>
                 <li>
-                    <a class="dropdown-item py-2 text-danger" href="<?= ViewHelper::url('/logout') ?>">
-                        <i class="bi bi-box-arrow-right me-2 text-danger"></i> Cerrar Sesión
-                    </a>
+                    <form method="POST" action="<?= ViewHelper::url('/logout') ?>" class="d-inline">
+                        <?= Csrf::field() ?>
+                        <button type="submit" class="dropdown-item py-2 text-danger border-0 bg-transparent w-100 text-start">
+                            <i class="bi bi-box-arrow-right me-2 text-danger"></i> Cerrar Sesión
+                        </button>
+                    </form>
                 </li>
             </ul>
         </div>

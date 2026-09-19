@@ -94,11 +94,20 @@ class UnidadController extends Controller
         $stmt->execute($params);
         $expedientes = $stmt->fetchAll();
 
-        // Conteos por estado de la unidad
+        // Conteos por estado de la unidad (parametrizado)
         $db = Database::getConnection();
-        $cPorRec = (int)$db->query("SELECT COUNT(*) as t FROM expedientes e JOIN estados_expediente es ON e.estado_id = es.id WHERE es.codigo = 'DERIVADO' AND e.unidad_actual_id = {$unidadId} AND e.activo = 1")->fetch()['t'];
-        $cEnTram = (int)$db->query("SELECT COUNT(*) as t FROM expedientes e JOIN estados_expediente es ON e.estado_id = es.id WHERE es.codigo IN ('RECEPCIONADO', 'EN_TRAMITE') AND e.unidad_actual_id = {$unidadId} AND e.activo = 1")->fetch()['t'];
-        $cResp = (int)$db->query("SELECT COUNT(*) as t FROM expedientes e JOIN estados_expediente es ON e.estado_id = es.id WHERE es.codigo IN ('RESPONDIDO', 'FINALIZADO') AND (e.unidad_actual_id = {$unidadId} OR e.unidad_responsable_id = {$unidadId}) AND e.activo = 1")->fetch()['t'];
+
+        $stmt1 = $db->prepare("SELECT COUNT(*) as t FROM expedientes e JOIN estados_expediente es ON e.estado_id = es.id WHERE es.codigo = 'DERIVADO' AND e.unidad_actual_id = :uid AND e.activo = 1");
+        $stmt1->execute(['uid' => $unidadId]);
+        $cPorRec = (int)$stmt1->fetch()['t'];
+
+        $stmt2 = $db->prepare("SELECT COUNT(*) as t FROM expedientes e JOIN estados_expediente es ON e.estado_id = es.id WHERE es.codigo IN ('RECEPCIONADO', 'EN_TRAMITE') AND e.unidad_actual_id = :uid AND e.activo = 1");
+        $stmt2->execute(['uid' => $unidadId]);
+        $cEnTram = (int)$stmt2->fetch()['t'];
+
+        $stmt3 = $db->prepare("SELECT COUNT(*) as t FROM expedientes e JOIN estados_expediente es ON e.estado_id = es.id WHERE es.codigo IN ('RESPONDIDO', 'FINALIZADO') AND (e.unidad_actual_id = :uid OR e.unidad_responsable_id = :uid2) AND e.activo = 1");
+        $stmt3->execute(['uid' => $unidadId, 'uid2' => $unidadId]);
+        $cResp = (int)$stmt3->fetch()['t'];
 
         $unidad = $this->unidadModel->find($unidadId);
 
@@ -158,7 +167,7 @@ class UnidadController extends Controller
                     $this->request->userAgent()
                 );
 
-                Auditoria::log((int)$user['id'], 'RECEPCION_EXPEDIENTE', 'unidad', $expedienteId, [
+                Auditoria::log((int)$user['id'], 'RECEPCION_EXPEDIENTE', 'unidad', $expedienteId, null, [
                     'ip' => $this->request->ip()
                 ]);
             });

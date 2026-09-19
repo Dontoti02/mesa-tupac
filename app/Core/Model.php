@@ -17,7 +17,8 @@ abstract class Model
 
     public function all(string $orderBy = 'id ASC'): array
     {
-        $stmt = $this->db()->prepare("SELECT * FROM `{$this->table}` ORDER BY {$orderBy}");
+        $safeOrderBy = $this->sanitizeOrderBy($orderBy);
+        $stmt = $this->db()->prepare("SELECT * FROM `{$this->table}` ORDER BY {$safeOrderBy}");
         $stmt->execute();
         return $stmt->fetchAll();
     }
@@ -40,9 +41,11 @@ abstract class Model
 
     public function where(string $whereClause, array $params = [], string $orderBy = '', ?int $limit = null, ?int $offset = null): array
     {
+        $this->sanitizeWhere($whereClause);
         $sql = "SELECT * FROM `{$this->table}` WHERE {$whereClause}";
         if (!empty($orderBy)) {
-            $sql .= " ORDER BY {$orderBy}";
+            $safeOrderBy = $this->sanitizeOrderBy($orderBy);
+            $sql .= " ORDER BY {$safeOrderBy}";
         }
         if ($limit !== null) {
             $sql .= " LIMIT {$limit}";
@@ -108,5 +111,34 @@ abstract class Model
     {
         $stmt = $this->db()->prepare("DELETE FROM `{$this->table}` WHERE `{$this->primaryKey}` = :id");
         return $stmt->execute(['id' => $id]);
+    }
+
+    /**
+     * Sanitiza cláusulas ORDER BY para prevenir inyección SQL.
+     * Solo permite columnas, ASC/DESC y comas.
+     */
+    private function sanitizeOrderBy(string $orderBy): string
+    {
+        $parts = explode(',', $orderBy);
+        $safe = [];
+        foreach ($parts as $part) {
+            $part = trim($part);
+            if (preg_match('/^[\w`\.\s]+$/u', $part) && preg_match('/\b(ASC|DESC)\b/i', $part)) {
+                $safe[] = $part;
+            }
+        }
+        return !empty($safe) ? implode(', ', $safe) : 'id ASC';
+    }
+
+    /**
+     * Sanitiza cláusulas WHERE para permitir solo condiciones seguras.
+     * Nota: Esto es una capa adicional; siempre usar parámetros enlazados.
+     */
+    private function sanitizeWhere(string $whereClause): string
+    {
+        if (preg_match('/;\s*(DROP|DELETE|UPDATE|INSERT|ALTER|CREATE|EXEC)/i', $whereClause)) {
+            throw new \InvalidArgumentException("Cláusula WHERE contiene sentencias SQL peligrosas.");
+        }
+        return $whereClause;
     }
 }
