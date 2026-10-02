@@ -80,6 +80,7 @@ $router->post('/mi-unidad/{id}/responder', [UnidadController::class, 'storeRespo
 
 // Expedientes Global, Detalle 360 y Descargas
 $router->get('/expedientes', [ExpedienteController::class, 'index'], ['AuthMiddleware']);
+$router->post('/expedientes/eliminar', [ExpedienteController::class, 'eliminar'], ['AuthMiddleware', 'RoleMiddleware:superadmin', 'CsrfMiddleware']);
 $router->get('/expedientes/{id}', [ExpedienteController::class, 'show'], ['AuthMiddleware']);
 $router->get('/expedientes/{id}/documento/{doc_id}', [ExpedienteController::class, 'descargarDocumento'], ['AuthMiddleware']);
 

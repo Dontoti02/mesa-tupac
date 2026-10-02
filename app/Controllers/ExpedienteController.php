@@ -215,4 +215,51 @@ class ExpedienteController extends Controller
 
         $this->response->download($fullPath, $doc['nombre_original'], $doc['mime_type']);
     }
+
+    /**
+     * Elimina (lógicamente) uno o varios expedientes seleccionados en el
+     * Registro Maestro. Acción restringida al rol superadmin por ruta.
+     */
+    public function eliminar(Request $request, Response $response): void
+    {
+        $ids = $request->post('expediente_ids', []);
+        if (!is_array($ids)) {
+            $ids = [];
+        }
+
+        $ids = array_values(array_unique(array_filter(
+            array_map('intval', $ids),
+            fn(int $id): bool => $id > 0
+        )));
+
+        if (empty($ids)) {
+            $this->redirect('/expedientes', [
+                'error' => 'Debe seleccionar al menos un expediente para eliminar.'
+            ]);
+        }
+
+        $eliminados = $this->expedienteModel->resumenPorIds($ids);
+        $total = $this->expedienteModel->desactivarMultiples($ids);
+
+        if ($total === 0) {
+            $this->redirect('/expedientes', [
+                'error' => 'Los expedientes seleccionados ya no se encuentran disponibles.'
+            ]);
+        }
+
+        Auditoria::log(
+            (int)($this->userId() ?? 0),
+            'ELIMINAR_EXPEDIENTES',
+            'expedientes',
+            null,
+            ['expedientes' => $eliminados],
+            ['cantidad_eliminada' => $total]
+        );
+
+        $this->redirect('/expedientes', [
+            'success' => $total === 1
+                ? 'Se eliminó 1 expediente del registro maestro.'
+                : "Se eliminaron {$total} expedientes del registro maestro."
+        ]);
+    }
 }

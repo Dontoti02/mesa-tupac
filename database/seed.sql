@@ -261,6 +261,11 @@ INSERT INTO `configuraciones` (`clave`, `valor`, `descripcion`, `grupo`) VALUES
 ('institucion_region', 'Cusco', 'Región sede', 'general'),
 ('institucion_anio', 'Año del Bicentenario, de la consolidación de nuestra Independencia', 'Nombre oficial del año', 'general'),
 ('institucion_pie_pagina', 'IESP Túpac Amaru – Cusco | Mesa de Partes Virtual Oficial. Atención de Lunes a Viernes de 08:00 a 16:30 hrs.', 'Texto al pie de páginas y documentos', 'general'),
+-- Numeración de expedientes (correlativo configurable desde Superadmin)
+('expediente_num_sigla', 'EXP', 'Sigla o prefijo del número de expediente', 'numeracion'),
+('expediente_num_incluir_anio', '1', 'Incluir el año en el formato del número de expediente', 'numeracion'),
+('expediente_num_digitos', '6', 'Cantidad de dígitos del correlativo de expedientes', 'numeracion'),
+('expediente_num_inicio', '1', 'Número inicial del correlativo al iniciar un nuevo período', 'numeracion'),
 -- Apariencia (Paleta institucional obligatoria: Rojo, Naranja, Plomo)
 ('logo_principal', '', 'Ruta del logo principal institucional', 'apariencia'),
 ('logo_login', '', 'Ruta del logo específico para pantalla de inicio de sesión', 'apariencia'),
@@ -280,7 +285,15 @@ INSERT INTO `configuraciones` (`clave`, `valor`, `descripcion`, `grupo`) VALUES
 ('color_texto_secundario', '#6B7280', 'Plomo medio para textos secundarios y subtítulos', 'apariencia'),
 ('color_borde', '#D1D5DB', 'Plomo claro para bordes de tablas y tarjetas', 'apariencia');
 
--- 13. CONFIGURACIÓN SMTP INICIAL
+-- 13. SECUENCIA DE CORRELATIVOS (se reconstruye desde los expedientes existentes)
+TRUNCATE TABLE `correlativos`;
+INSERT INTO `correlativos` (`clave`, `ultimo_numero`)
+SELECT CONCAT('EXPEDIENTE-', YEAR(CURDATE())),
+       COALESCE(MAX(CAST(RIGHT(`numero_expediente`, 6) AS UNSIGNED)), 0)
+FROM `expedientes`
+WHERE `numero_expediente` LIKE CONCAT('EXP-', YEAR(CURDATE()), '-%');
+
+-- 14. CONFIGURACIÓN SMTP INICIAL
 TRUNCATE TABLE `configuracion_smtp`;
 INSERT INTO `configuracion_smtp` (`id`, `host`, `puerto`, `usuario`, `password_encriptado`, `seguridad`, `remitente_email`, `remitente_nombre`, `activo`) VALUES
 (1, 'smtp.gmail.com', 587, '', '', 'tls', 'mesadepartes@tupacamaru.edu.pe', 'Mesa de Partes - IESP Túpac Amaru', 0);

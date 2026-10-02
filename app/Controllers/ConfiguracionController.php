@@ -8,6 +8,7 @@ use App\Core\Request;
 use App\Core\Response;
 use App\Core\Database;
 use App\Models\Configuracion;
+use App\Models\Expediente;
 use App\Models\Auditoria;
 use App\Helpers\Validator;
 use App\Helpers\Mailer;
@@ -17,16 +18,24 @@ class ConfiguracionController extends Controller
     public function configuracion(): void
     {
         $config = Configuracion::getAll();
+        $numeracion = Expediente::getNumeracionSettings();
 
         $this->view('administracion.configuracion', [
             'title' => 'Configuración Institucional General',
-            'config' => $config
+            'config' => $config,
+            'numeracion' => $numeracion,
+            'proximoNumero' => Expediente::previewNumeroExpediente(),
+            'proximoCorrelativo' => Expediente::proximoCorrelativo($numeracion)
         ], 'app');
     }
 
     public function updateConfiguracion(): void
     {
         $data = $this->request->all();
+
+        // Validar primero la numeración para no guardar ajustes incompletos
+        $numeracion = $this->validarNumeracion($data);
+
         $fields = [
             'institucion_nombre',
             'institucion_nombre_corto',
@@ -48,6 +57,13 @@ class ConfiguracionController extends Controller
                 Configuracion::set($field, trim((string)$data[$field]));
             }
         }
+
+        // Registrar los cambios de numeración de expedientes
+        $numeracionAnterior = [];
+        foreach (array_keys($numeracion) as $clave) {
+            $numeracionAnterior[$clave] = Configuracion::get($clave);
+        }
+        Configuracion::setMultiple($numeracion);
 
         // Procesar subida de imágenes (logos, favicon)
         $uploadDir = __DIR__ . '/../../public/assets/img';
@@ -74,7 +90,68 @@ class ConfiguracionController extends Controller
         }
 
         Auditoria::log((int)$this->userId(), 'ACTUALIZAR_CONFIGURACION_GENERAL', 'configuraciones');
-        $this->redirect('/administracion/configuracion', ['success' => 'Configuración institucional actualizada correctamente.']);
+        Auditoria::log(
+            (int)$this->userId(),
+            'ACTUALIZAR_NUMERACION_EXPEDIENTES',
+            'configuraciones',
+            null,
+            $numeracionAnterior,
+            $numeracion
+        );
+        $this->redirect('/administracion/configuracion', ['success' => 'Configuración institucional y numeración de expedientes actualizadas correctamente.']);
+    }
+
+    /**
+     * Valida los parámetros de numeración de expedientes y devuelve los valores
+     * normalizados listos para guardar. Ante datos inválidos redirige con el
+     * mensaje de error correspondiente, por lo que el flujo se detiene ahí.
+     */
+    private function validarNumeracion(array $data): array
+    {
+        $sigla = mb_strtoupper(trim((string)($data['expediente_num_sigla'] ?? '')), 'UTF-8');
+
+        if ($sigla === '') {
+            $this->redirect('/administracion/configuracion', ['error' => 'La sigla de la numeración de expedientes es obligatoria.']);
+        }
+
+        if (mb_strlen($sigla, 'UTF-8') > 20) {
+            $this->redirect('/administracion/configuracion', ['error' => 'La sigla de la numeración no puede superar los 20 caracteres.']);
+        }
+
+        if (!preg_match('/^[\p{L}\p{N}]+(?:-[\p{L}\p{N}]+)*$/u', $sigla)) {
+            $this->redirect('/administracion/configuracion', [
+                'error' => 'La sigla solo admite letras, números y guiones simples (ejemplo: EXP o MP-TA).'
+            ]);
+        }
+
+        $incluirAnio = isset($data['expediente_num_incluir_anio']) ? 1 : 0;
+
+        $digitosRaw = trim((string)($data['expediente_num_digitos'] ?? ''));
+        if ($digitosRaw === '' || !ctype_digit($digitosRaw)) {
+            $this->redirect('/administracion/configuracion', ['error' => 'La cantidad de dígitos del correlativo debe ser un número entero.']);
+        }
+
+        $digitos = (int)$digitosRaw;
+        if ($digitos < 1 || $digitos > 12) {
+            $this->redirect('/administracion/configuracion', ['error' => 'La cantidad de dígitos del correlativo debe estar entre 1 y 12.']);
+        }
+
+        $inicioRaw = trim((string)($data['expediente_num_inicio'] ?? ''));
+        if ($inicioRaw === '' || !ctype_digit($inicioRaw)) {
+            $this->redirect('/administracion/configuracion', ['error' => 'El número inicial del correlativo debe ser un número entero.']);
+        }
+
+        $inicio = (int)$inicioRaw;
+        if ($inicio < 1) {
+            $this->redirect('/administracion/configuracion', ['error' => 'El número inicial del correlativo debe ser 1 o mayor.']);
+        }
+
+        return [
+            'expediente_num_sigla' => $sigla,
+            'expediente_num_incluir_anio' => (string)$incluirAnio,
+            'expediente_num_digitos' => (string)$digitos,
+            'expediente_num_inicio' => (string)$inicio
+        ];
     }
 
     public function apariencia(): void

@@ -62,6 +62,19 @@ DB_COLLATION=utf8mb4_unicode_ci
    ```
    *(Nota: `run_seed.php` garantiza la correcta inserción de tildes, caracteres en quechua y nombres institucionales en UTF-8 nativo).*
 
+#### Paso 2.3.1: Actualización desde versiones anteriores (solo instalaciones existentes)
+Si la base de datos ya fue creada con una versión previa del sistema y se desea habilitar la
+numeración configurable de expedientes, ejecute una sola vez:
+
+```powershell
+mysql -u root mesa_partes_tupac < database/upgrade_numeracion.sql
+```
+
+Este archivo agrega la tabla `correlativos`, registra los parámetros de numeración por defecto
+(sigla `EXP`, año incluido, 6 dígitos) y posiciona el correlativo del año en curso después del
+último expediente ya registrado, de modo que la numeración continúe sin repeticiones. Es
+idempotente: puede ejecutarse varias veces sin duplicar información ni alterar lo ya configurado.
+
 #### Paso 2.4: Permisos de Carpetas de Almacenamiento
 Asegúrese de que el servidor web tenga permisos de escritura en:
 - `storage/documents/` (archivos adjuntos cargados por los usuarios)

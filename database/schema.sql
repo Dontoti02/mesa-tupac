@@ -335,7 +335,15 @@ CREATE TABLE `intentos_login` (
     INDEX `idx_intentos_username` (`username`, `fecha_hora`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- 20. TOKENS DE RECUPERACIÓN DE CONTRASEÑA
+-- 20. CORRELATIVOS DE NUMERACIÓN (secuencia atómica por formato y año)
+DROP TABLE IF EXISTS `correlativos`;
+CREATE TABLE `correlativos` (
+    `clave` VARCHAR(60) NOT NULL PRIMARY KEY,
+    `ultimo_numero` INT UNSIGNED NOT NULL DEFAULT 0,
+    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 21. TOKENS DE RECUPERACIÓN DE CONTRASEÑA
 DROP TABLE IF EXISTS `password_resets`;
 CREATE TABLE `password_resets` (
     `id` INT AUTO_INCREMENT PRIMARY KEY,

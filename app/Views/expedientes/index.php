@@ -1,5 +1,9 @@
 <?php
 use App\Helpers\ViewHelper;
+use App\Helpers\Csrf;
+
+$isSuperadmin = in_array('superadmin', is_array($currentUser) ? ($currentUser['roles'] ?? []) : [], true);
+$colspan = $isSuperadmin ? 9 : 8;
 ?>
 
 <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
@@ -8,6 +12,13 @@ use App\Helpers\ViewHelper;
         <p class="text-muted mb-0">Listado general con búsqueda avanzada, trazabilidad integral y filtros institucionales.</p>
     </div>
     <div class="d-flex gap-2">
+        <?php if ($isSuperadmin): ?>
+            <button type="button" id="btnEliminarSeleccionados" class="btn btn-outline-danger" disabled
+                    data-bs-toggle="modal" data-bs-target="#modalEliminarExpedientes">
+                <i class="bi bi-trash3 me-1"></i> Eliminar seleccionados
+                <span class="badge bg-danger ms-1" id="contadorSeleccionados">0</span>
+            </button>
+        <?php endif; ?>
         <button class="btn btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#panelFiltros" aria-expanded="false">
             <i class="bi bi-funnel me-1"></i> Filtros Avanzados
         </button>
@@ -120,10 +131,20 @@ use App\Helpers\ViewHelper;
         <span class="small text-muted">Página <?= $currentPage ?> de <?= max(1, $totalPages) ?></span>
     </div>
 
+    <?php if ($isSuperadmin): ?>
+    <form id="formExpedientes" action="<?= ViewHelper::url('/expedientes/eliminar') ?>" method="POST">
+        <?= Csrf::field() ?>
+    <?php endif; ?>
     <div class="table-responsive">
         <table class="table table-hover align-middle mb-0 table-custom border-0">
             <thead>
                 <tr>
+                    <?php if ($isSuperadmin): ?>
+                        <th style="width: 38px;">
+                            <input type="checkbox" class="form-check-input" id="chkSeleccionarTodos"
+                                   title="Seleccionar todos" aria-label="Seleccionar todos">
+                        </th>
+                    <?php endif; ?>
                     <th>Expediente</th>
                     <th>Fecha</th>
                     <th>Solicitante</th>
@@ -137,7 +158,7 @@ use App\Helpers\ViewHelper;
             <tbody>
                 <?php if (empty($expedientes)): ?>
                     <tr>
-                        <td colspan="8" class="text-center py-5 text-muted">
+                        <td colspan="<?= $colspan ?>" class="text-center py-5 text-muted">
                             <i class="bi bi-search fs-1 d-block mb-2 text-secondary opacity-50"></i>
                             No se encontraron expedientes con los criterios seleccionados.
                         </td>
@@ -145,6 +166,13 @@ use App\Helpers\ViewHelper;
                 <?php else: ?>
                     <?php foreach ($expedientes as $exp): ?>
                         <tr>
+                            <?php if ($isSuperadmin): ?>
+                                <td>
+                                    <input type="checkbox" class="form-check-input chk-expediente"
+                                           name="expediente_ids[]" value="<?= (int)$exp['id'] ?>"
+                                           aria-label="Seleccionar expediente <?= ViewHelper::escape($exp['numero_expediente']) ?>">
+                                </td>
+                            <?php endif; ?>
                             <td>
                                 <a href="<?= ViewHelper::url('/expedientes/' . $exp['id']) ?>" class="fw-bold text-decoration-none" style="color: var(--color-primary);">
                                     <?= ViewHelper::escape($exp['numero_expediente']) ?>
@@ -192,6 +220,9 @@ use App\Helpers\ViewHelper;
             </tbody>
         </table>
     </div>
+    <?php if ($isSuperadmin): ?>
+    </form>
+    <?php endif; ?>
 
     <!-- Paginación (Sección 41) -->
     <?php if ($totalPages > 1): ?>
@@ -220,3 +251,85 @@ use App\Helpers\ViewHelper;
         </div>
     <?php endif; ?>
 </div>
+
+<?php if ($isSuperadmin): ?>
+<!-- Modal de confirmación de eliminación -->
+<div class="modal fade" id="modalEliminarExpedientes" tabindex="-1" aria-labelledby="modalEliminarExpedientesLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header text-white" style="background: var(--color-primary);">
+                <h5 class="modal-title fw-bold" id="modalEliminarExpedientesLabel">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>Confirmar eliminación
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body p-4">
+                <p class="mb-2">¿Está seguro de eliminar <strong id="modalContadorSeleccionados">0</strong> expediente(s) del Registro Maestro?</p>
+                <p class="text-muted small mb-0">Dejarán de mostrarse en el sistema, pero la información se conserva para fines de trazabilidad y auditoría.</p>
+            </div>
+            <div class="modal-footer bg-light">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger fw-bold" id="btnConfirmarEliminar">
+                    <i class="bi bi-trash3 me-1"></i> Eliminar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+(function () {
+    var form = document.getElementById('formExpedientes');
+    if (!form) { return; }
+
+    var selectAll = document.getElementById('chkSeleccionarTodos');
+    var btnEliminar = document.getElementById('btnEliminarSeleccionados');
+    var contador = document.getElementById('contadorSeleccionados');
+    var modalContador = document.getElementById('modalContadorSeleccionados');
+    var btnConfirmar = document.getElementById('btnConfirmarEliminar');
+    var checkboxes = function () {
+        return Array.prototype.slice.call(form.querySelectorAll('.chk-expediente'));
+    };
+    var seleccionados = function () {
+        return checkboxes().filter(function (c) { return c.checked; });
+    };
+
+    function actualizar() {
+        var total = checkboxes().length;
+        var marcados = seleccionados().length;
+        if (contador) { contador.textContent = marcados; }
+        if (btnEliminar) { btnEliminar.disabled = marcados === 0; }
+        if (selectAll) {
+            selectAll.checked = total > 0 && marcados === total;
+            selectAll.indeterminate = marcados > 0 && marcados < total;
+        }
+    }
+
+    if (selectAll) {
+        selectAll.addEventListener('change', function () {
+            checkboxes().forEach(function (c) { c.checked = selectAll.checked; });
+            actualizar();
+        });
+    }
+
+    checkboxes().forEach(function (c) {
+        c.addEventListener('change', actualizar);
+    });
+
+    var modal = document.getElementById('modalEliminarExpedientes');
+    if (modal) {
+        modal.addEventListener('show.bs.modal', function () {
+            if (modalContador) { modalContador.textContent = seleccionados().length; }
+        });
+    }
+
+    if (btnConfirmar) {
+        btnConfirmar.addEventListener('click', function () {
+            if (seleccionados().length > 0) { form.submit(); }
+        });
+    }
+
+    actualizar();
+})();
+</script>
+<?php endif; ?>

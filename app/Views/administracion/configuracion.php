@@ -6,7 +6,7 @@ use App\Helpers\Csrf;
 <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
     <div>
         <h3 class="fw-bold mb-1" style="color: var(--color-primary);">Configuración Institucional General</h3>
-        <p class="text-muted mb-0">Identidad institucional, membretes oficiales, datos de contacto y logos del sistema.</p>
+        <p class="text-muted mb-0">Identidad institucional, membretes oficiales, datos de contacto, logos y numeración oficial de expedientes.</p>
     </div>
 </div>
 
@@ -117,7 +117,76 @@ use App\Helpers\Csrf;
                         </div>
                     </div>
                 </div>
-                <div class="card-footer bg-light py-3 text-end">
+            </div>
+
+            <!-- Numeración de Expedientes -->
+            <div class="card shadow-sm border-0 mt-4">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h6 class="mb-0 fw-bold text-secondary">
+                        <i class="bi bi-upc-scan me-2 text-primary"></i>Numeración y Correlativo de Expedientes
+                    </h6>
+                </div>
+                <div class="card-body p-4">
+                    <p class="text-muted small mb-4">
+                        Define el formato oficial con el que se numerarán los expedientes que se registren a partir de ahora.
+                        Los expedientes ya registrados conservan su número original.
+                    </p>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold" for="exp_num_sigla">
+                                Sigla / Prefijo <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" class="form-control text-uppercase" id="exp_num_sigla" name="expediente_num_sigla"
+                                   maxlength="20" pattern="[A-Za-z0-9]+(-[A-Za-z0-9]+)*"
+                                   value="<?= ViewHelper::escape($numeracion['sigla']) ?>" required>
+                            <div class="form-text">Solo letras, números y guiones. Ej.: <code>EXP</code> o <code>MP-TA</code>.</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold" for="exp_num_digitos">
+                                Cantidad de Dígitos del Correlativo <span class="text-danger">*</span>
+                            </label>
+                            <input type="number" class="form-control" id="exp_num_digitos" name="expediente_num_digitos"
+                                   min="1" max="12" step="1"
+                                   value="<?= (int)$numeracion['digitos'] ?>" required>
+                            <div class="form-text">Los ceros a la izquierda completan el número. Ej.: <code>6</code> → <code>000123</code>.</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold" for="exp_num_inicio">
+                                Número Inicial del Correlativo <span class="text-danger">*</span>
+                            </label>
+                            <input type="number" class="form-control" id="exp_num_inicio" name="expediente_num_inicio"
+                                   min="1" step="1"
+                                   value="<?= (int)$numeracion['inicio'] ?>" required>
+                            <div class="form-text">Se aplica al iniciar un correlativo nuevo; no altera los ya emitidos.</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold d-block">Año en el Número</label>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" role="switch" id="exp_num_incluir_anio"
+                                       name="expediente_num_incluir_anio" value="1"
+                                       <?= $numeracion['incluir_anio'] ? 'checked' : '' ?>>
+                                <label class="form-check-label" for="exp_num_incluir_anio">
+                                    Incluir el año (reinicia el correlativo cada año)
+                                </label>
+                            </div>
+                            <div class="form-text">Si lo desactiva, el correlativo será único para toda la vida del sistema.</div>
+                        </div>
+                        <div class="col-12">
+                            <div class="border rounded p-3 bg-light d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2">
+                                <div>
+                                    <div class="small text-muted mb-1">Vista previa del próximo número</div>
+                                    <code id="numeracion-preview" class="fs-5" data-proximo="<?= (int)$proximoCorrelativo ?>"><?= ViewHelper::escape($proximoNumero) ?></code>
+                                </div>
+                                <div class="small text-muted text-md-end">
+                                    Correlativo <span id="numeracion-preview-correlativo"><?= (int)$proximoCorrelativo ?></span><br>
+                                    Vigente desde el <?= ViewHelper::escape($numeracion['anio']) ?>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-light py-3 d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2">
+                    <span class="small text-muted"><i class="bi bi-info-circle me-1"></i>Los cambios quedan registrados en la bitácora de auditoría.</span>
                     <button type="submit" class="btn btn-primary fw-bold shadow-sm px-4">
                         <i class="bi bi-save me-1"></i> Guardar Cambios
                     </button>
@@ -190,3 +259,54 @@ use App\Helpers\Csrf;
         </div>
     </div>
 </form>
+
+<script>
+(function () {
+    var inputs = {
+        sigla: document.getElementById('exp_num_sigla'),
+        digitos: document.getElementById('exp_num_digitos'),
+        anio: document.getElementById('exp_num_incluir_anio')
+    };
+    var preview = document.getElementById('numeracion-preview');
+    var previewCorrelativo = document.getElementById('numeracion-preview-correlativo');
+    if (!preview || !previewCorrelativo || !inputs.sigla || !inputs.digitos || !inputs.anio) {
+        return;
+    }
+
+    var anioVigente = <?= json_encode((string)$numeracion['anio']) ?>;
+
+    function actualizarVistaPrevia() {
+        var sigla = inputs.sigla.value.trim().toUpperCase();
+        if (!sigla) {
+            sigla = 'EXP';
+        }
+
+        var digitos = parseInt(inputs.digitos.value, 10);
+        if (isNaN(digitos) || digitos < 1) {
+            digitos = 1;
+        }
+        if (digitos > 12) {
+            digitos = 12;
+        }
+
+        var correlativo = parseInt(preview.dataset.proximo, 10);
+        if (isNaN(correlativo)) {
+            correlativo = 1;
+        }
+
+        var partes = [sigla];
+        if (inputs.anio.checked) {
+            partes.push(anioVigente);
+        }
+        partes.push(String(correlativo).padStart(digitos, '0'));
+
+        preview.textContent = partes.join('-');
+        previewCorrelativo.textContent = correlativo;
+    }
+
+    Object.keys(inputs).forEach(function (clave) {
+        inputs[clave].addEventListener('input', actualizarVistaPrevia);
+        inputs[clave].addEventListener('change', actualizarVistaPrevia);
+    });
+})();
+</script>

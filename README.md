@@ -27,6 +27,7 @@ El sistema implementa la paleta cromática reglamentaria gestionada mediante var
 2. **Portal Ciudadano y Formulario Único de Trámite (FUT Digital):**
    - Registro interactivo con validación de solicitante (DNI / CE / RUC, filiación académica de 9 carreras).
    - Generación instantánea de número de expediente correlativo anual (`EXP-YYYY-XXXXXX`) y código único de seguimiento (`TA-XXXXXX`).
+   - Numeración configurable desde *Superadmin → Configuración General*: sigla, cantidad de dígitos, número inicial y uso opcional del año, con vista previa del próximo número.
    - Carga segura de adjuntos (validación MIME real via `finfo`, hash criptográfico SHA-256).
    - **Cargo Digital Oficial Imprimible** con firma institucional y código QR de verificación pública inmediata.
 
@@ -46,6 +47,7 @@ El sistema implementa la paleta cromática reglamentaria gestionada mediante var
    - **Catálogo de Programas de Estudio:** 9 carreras oficiales del instituto.
    - **Catálogo del FUT:** 35 procedimientos organizados en 18 categorías, plazos normativos, costos y requisitos.
    - **Estados Normativos:** 16 estados del ciclo de vida documentario con selector de color e iconos.
+   - **Registro Maestro de Expedientes (solo Superadmin):** eliminación lógica individual o masiva de expedientes con selección por casillas y confirmación, conservando la trazabilidad y el registro de auditoría.
 
 6. **Personalización de Apariencia con Live Preview:**
    - Selector interactivo de colores en tiempo real que previsualiza Sidebar, Header, Botones e Insignias antes de guardar.
